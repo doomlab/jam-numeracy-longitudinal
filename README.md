@@ -2,6 +2,8 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16994802.svg)](https://doi.org/10.5281/zenodo.16994802)
 
+Preprint: https://osf.io/preprints/psyarxiv/cpdva_v1 
+
 This repository contains the materials, code, and data for the paper:
 
 Counting on Memory: How Expertise Shapes Our Numerical Judgments of Associations
