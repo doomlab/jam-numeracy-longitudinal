@@ -1,5 +1,7 @@
 ## Counting on Memory: How Expertise Shapes Our Numerical Judgments of Associations
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16994802.svg)](https://doi.org/10.5281/zenodo.16994802)
+
 This repository contains the materials, code, and data for the paper:
 
 Counting on Memory: How Expertise Shapes Our Numerical Judgments of Associations
@@ -44,4 +46,4 @@ The analyses were conducted in R with the following key packages:
 
 If you use this code or data, please cite:
 
-Buchanan, E.M. (2025). Counting on Memory: How Expertise Shapes Our Numerical Judgments of Associations. Manuscript submitted for publication.
+Buchanan, E.M. (2025). Counting on Memory: How Expertise Shapes Our Numerical Judgments of Associations. https://doi.org/10.5281/zenodo.16994802
