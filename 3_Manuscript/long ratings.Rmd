@@ -51,7 +51,6 @@ output: papaja::apa6_docx
 ```{r load_packages, include = FALSE}
 knitr::opts_chunk$set(cache = TRUE)
 library("papaja")
-library(reshape)
 library(nlme)
 library(rio)
 library(dplyr)
@@ -369,7 +368,7 @@ screen was listed in all five sessions, its probability was 5/5, or
 each participant, with ten word–target pairs drawn from each probability
 level (20%, 40%, 60%, 80%, and 100%).
 
-\textbf{Judgment Phase.} 
+\textbf{Judgment Phase.}
 
 Participants were then asked to estimate the probability of each of
 their cue–target combinations. For example, a participant might see the
@@ -776,7 +775,7 @@ daily practice with estimation does not necessarily make us precise
 estimators. Metacognitive research has repeatedly shown that people tend
 to overestimate their learning and memory performance [@Koriat2008;
 @Koriat2005; @Koriat2006]. Similarly, in our study, participants
-exhibited systematic bias (intercepts > 0), even when judging their own
+exhibited systematic bias (intercepts \> 0), even when judging their own
 norms. Although slopes were steeper in the experimental group than in
 the control and matched groups, they remained below 1.0, the benchmark
 for perfect sensitivity. Thus, while participants became more calibrated
