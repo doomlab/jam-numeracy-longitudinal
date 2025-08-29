@@ -28,23 +28,7 @@ editor_options:
     wrap: 72
   chunk_output_type: inline
 bibliography: references.bib
-
-header-includes:
-  - |
-    \makeatletter
-    \renewcommand{\paragraph}{@startsection{paragraph}{4}{\parindent}%
-      {0\baselineskip @plus 0.2ex @minus 0.2ex}%
-      {-1em}%
-      {\normalfont\normalsize\bfseries\typesectitle}}
-    
-    \renewcommand{\subparagraph}[1]{@startsection{subparagraph}{5}{1em}%
-      {0\baselineskip @plus 0.2ex @minus 0.2ex}%
-      {-\z@\relax}%
-      {\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
-    \makeatother
-
-csl: "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
-documentclass: "apa7"
+csl: "scientific-reports.csl"
 output: papaja::apa6_docx
 ---
 
@@ -797,6 +781,10 @@ baseline word frequency or semantic richness, further shape numeric
 estimation from memory, and whether scaffolds from the numeracy
 literature (e.g., training in base rates or frequency formats) could
 reduce residual bias.
+
+## Funding
+
+This research received no external funding.
 
 \newpage
 
