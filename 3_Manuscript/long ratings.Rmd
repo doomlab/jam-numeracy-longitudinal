@@ -1,31 +1,34 @@
 ---
-title             : "Counting on Memory: How Expertise Shapes Our Numerical Judgments of Associations"
-shorttitle        : "COUNTING MEMORY"
+title: "Counting on Memory: How Expertise Shapes Our Numerical Judgments of Associations"
+shorttitle: "COUNTING MEMORY"
 author: 
-  - name          : "Erin M. Buchanan"
-    affiliation   : "1"
-    corresponding : yes    # Define only one corresponding author
-    address       : ""
-    email         : "ebuchanan@harrisburgu.edu"
+  - name: "Erin M. Buchanan"
+    affiliation: "1"
+    corresponding: yes    # Define only one corresponding author
+    address: "326 Market St., Harrisburg, PA 17101"
+    email: "ebuchanan@harrisburgu.edu"
 affiliation:
-  - id            : "1"
-    institution   : "Harrisburg University of Science and Technology"
-author_note: |
+  - id: "1"
+    institution: "Harrisburg University of Science and Technology"
   
 abstract: |
-  Accurate numerical estimation underlies many aspects of cognition, from basic quantity judgments to complex decision-making. One domain where numerical reasoning is especially critical is memory, where individuals often must estimate the likelihood that one event or idea is associated with another. In this study, participants completed a free association task across multiple sessions to generate their own individualized word-pair norms. Later, they provided numerical probability judgments (0–100%) of how often they had produced each pair. These judgments were compared to collective free association norms, a matched group evaluating others’ pairs, and a traditional control group. Results showed that participants who judged their own pairs were significantly more accurate in estimating associative probabilities than control or matched groups, reflecting the benefits of expertise derived from repeated interaction with stimuli. However, systematic overestimation bias persisted, especially for weak associations, indicating that metacognitive sensitivity to probability differences remains limited. These findings highlight how expertise improves—but does not perfect—the ability to translate memory associations into numerical judgments, offering new insights into the intersection of numerical cognition, metacognition, and memory.
+  Accurate numerical estimation underlies many aspects of cognition, from basic quantity judgments to complex decision-making. One domain where numerical reasoning is especially critical is memory, where individuals often must estimate the likelihood that one event or idea is associated with another. In this study, participants completed a free association task across multiple sessions to generate their own individualized word-pair norms. Later, they provided numerical probability judgments (0–100%) of how often they had produced each pair. These judgments were compared to collective free association norms, a matched group evaluating others’ pairs, and a traditional control group. Results showed that participants who judged their own pairs were significantly more accurate in estimating associative probabilities than control or matched groups, reflecting the benefits of expertise derived from repeated interaction with stimuli. However, systematic overestimation bias persisted, especially for weak associations, indicating that metacognitive sensitivity to probability differences remains limited. These findings highlight how expertise improves, but does not perfect, the ability to translate memory associations into numerical judgments, offering new insights into the intersection of numerical cognition, metacognition, and memory.
   
 keywords: "numeracy, judgments, memory, expertise"
-floatsintext: no
-linenumbers: yes
-draft: no
-mask: no
-figurelist: no
-tablelist: no
-footnotelist: no
-classoption: "man"
-output: papaja::apa6_pdf
+floatsintext      : yes
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+classoption       : "man"
+editor_options: 
+  markdown: 
+    wrap: 72
+  chunk_output_type: inline
 bibliography: references.bib
+
 header-includes:
   - |
     \makeatletter
@@ -33,14 +36,16 @@ header-includes:
       {0\baselineskip @plus 0.2ex @minus 0.2ex}%
       {-1em}%
       {\normalfont\normalsize\bfseries\typesectitle}}
+    
+    \renewcommand{\subparagraph}[1]{@startsection{subparagraph}{5}{1em}%
       {0\baselineskip @plus 0.2ex @minus 0.2ex}%
       {-\z@\relax}%
       {\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+    \makeatother
+
 csl: "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
 documentclass: "apa7"
-editor_options: 
-  markdown: 
-    wrap: sentence
+output: papaja::apa6_docx
 ---
 
 ```{r load_packages, include = FALSE}
@@ -50,49 +55,119 @@ library(reshape)
 library(nlme)
 library(rio)
 library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(patchwork)
 ```
 
-People are often asked to make numerical judgments of frequency or probability in daily life.
-For instance, if you are waiting for a friend who is late to lunch, you must estimate whether lateness is a high-frequency or low-frequency event to decide when to become concerned.
-Such numerical judgments are prone to systematic bias, and research has long shown that people tend to inflate their estimates in many domains.
-In education, for example, students often judge their competence at levels higher than their actual performance supports [@Dunning2003].
-Similarly, judgments of learning (JOLs) are typically overconfident, which can lead to inefficient study strategies [@Koriat2005].
-Individuals who self-monitor their study habits are frequently highly confident but poorly calibrated in their learning [@Cutler1989].
-These findings point to a broader problem in cognition: people struggle to map memory experiences onto accurate numerical estimates, underscoring the need for methods that remediate inflated predictions for both theoretical and applied purposes [@Koriat2008; @Koriat2006].
-This issue resonates with central questions in numerical cognition, where researchers investigate how humans perceive and evaluate numerical magnitudes, probabilities, and quantities [@dehaene2011; @reyna2008].
+People are often asked to make numerical judgments of frequency or
+probability in daily life. For instance, if you are waiting for a friend
+who is late to lunch, you must estimate whether lateness is a
+high-frequency or low-frequency event to decide when to become
+concerned. Such numerical judgments are prone to systematic bias, and
+research has long shown that people tend to inflate their estimates in
+many domains. In education, for example, students often judge their
+competence at levels higher than their actual performance supports
+[@Dunning2003]. Similarly, judgments of learning (JOLs) are typically
+overconfident, which can lead to inefficient study strategies
+[@Koriat2005]. Individuals who self-monitor their study habits are
+frequently highly confident but poorly calibrated in their learning
+[@Cutler1989]. These findings point to a broader problem in cognition:
+people struggle to map memory experiences onto accurate numerical
+estimates, underscoring the need for methods that remediate inflated
+predictions for both theoretical and applied purposes [@Koriat2008;
+@Koriat2006]. This issue resonates with central questions in numerical
+cognition, where researchers investigate how humans perceive and
+evaluate numerical magnitudes, probabilities, and quantities
+[@dehaene2011; @reyna2008].
 
-Word associations provide a rich domain for studying how people generate and evaluate numerical judgments of probability, making them a useful context for investigating inflated predictions and their potential remediation [@Koriat2006; @Maki2007a].
-Typically, word associations are measured using the method of free association [@Nelson2000], in which participants provide the first word (target) that comes to mind when presented with another word (cue).
-When aggregated across many individuals, the likelihood that word B follows word A, termed the forward strength (FSG), is expressed as a conditional probability, a fundamentally numerical index of associative strength.
-Large-scale databases now provide probabilistic values for thousands of cue–response pairs [@Nelson2004; @dedeyne2019].
-For example, the probability that *computer* elicits the response *program* is approximately 12%, meaning that about 12 of 100 people produce that pairing.
-Thus, free association tasks translate linguistic memory associations into numerical probability values, making them an ideal bridge between memory research and numerical cognition.
+Word associations provide a rich domain for studying how people generate
+and evaluate numerical judgments of probability, making them a useful
+context for investigating inflated predictions and their potential
+remediation [@Koriat2006; @Maki2007a]. Typically, word associations are
+measured using the method of free association [@Nelson2000], in which
+participants provide the first word (target) that comes to mind when
+presented with another word (cue). When aggregated across many
+individuals, the likelihood that word B follows word A, termed the
+forward strength (FSG), is expressed as a conditional probability, a
+fundamentally numerical index of associative strength. Large-scale
+databases now provide probabilistic values for thousands of cue–response
+pairs [@nelson2004; @dedeyne2019]. For example, the probability that
+*computer* elicits the response *program* is approximately 12%, meaning
+that about 12 of 100 people produce that pairing. Thus, free association
+tasks translate linguistic memory associations into numerical
+probability values, making them an ideal bridge between memory research
+and numerical cognition.
 
-Studies of inflated predictions in word associations consistently show that people overestimate the numerical probability of word relations, particularly for weakly associated pairs [@Maki2007].
-This inflation effect represents a systematic bias in probability estimation, paralleling findings in broader numerical cognition where people often misjudge small magnitudes or low-probability events [e.g., @gigerenzer1995; @Reyna2008].
-The tendency toward assigning excessively high ratings is remarkably resistant to change [@Maki2007b; @Valentine2013; @Nelson2005].
-For example, the inflation persists even when participants are provided with a list of common associates for a given cue [@Foster2012], when they are prompted to consider alternative responses [@Maki2007a], or even when they overtly generate their own list of associates [@Koriat2008; @Koriat2006].
-In all these cases, numerical judgments of associative probability remain poorly calibrated, underscoring the robustness of estimation bias across both memory and numerical domains.
+Studies of inflated predictions in word associations consistently show
+that people overestimate the numerical probability of word relations,
+particularly for weakly associated pairs [@Maki2007]. This inflation
+effect represents a systematic bias in probability estimation,
+paralleling findings in broader numerical cognition where people often
+misjudge small magnitudes or low-probability events [e.g.,
+@gigerenzer1995; @reyna2008]. The tendency toward assigning excessively
+high ratings is remarkably resistant to change [@Maki2007a;
+@Valentine2013; @Nelson2005]. For example, the inflation persists even
+when participants are provided with a list of common associates for a
+given cue [@Foster2012], when they are prompted to consider alternative
+responses [@Maki2007a], or even when they overtly generate their own
+list of associates [@Koriat2008; @Koriat2006]. In all these cases,
+numerical judgments of associative probability remain poorly calibrated,
+underscoring the robustness of estimation bias across both memory and
+numerical domains.
 
-Because of the robustness of the inflation effect, finding ways to reduce it is important.
-Prior work has shown that mnemonic and theory-based debiasing procedures can reduce overall overestimation bias, but these methods rarely improve sensitivity: the ability to discriminate between low- and high-probability events [\@Valentine2013].
-In terms of numerical cognition, *bias* reflects a systematic tendency to assign inflated probability values (treating most associations as stronger than they truly are), whereas *sensitivity* reflects accuracy in tuning numerical judgments to actual associative strength [@Maki2007b].
-The current experiment tested whether using individually normed frequencies would improve numerical estimation of associative probabilities.
-Previous studies have shown that people are generally poor at estimating what *others* would say when given a particular cue word [@Maki2007a; @Maki2007b; @Buchanan2010; @Foster2012; @maxwell2020; @maxwell2021], suggesting that collective norms are difficult to approximate.
-In a traditional judgment of associative memory (JAM) task, participants estimate how many people out of 100 would produce a target word in response to a cue [@Maki2007].
-In contrast, our design had participants generate their own frequency norms across multiple sessions and then judge the probability of their own cue–target pairings.
-If these frequency memories function like distributed practice in study skills, repeated exposure should foster expertise in probability estimation, improving judgment capacity relative to comparison groups.
+Because of the robustness of the inflation effect, finding ways to
+reduce it is important. Prior work has shown that mnemonic and
+theory-based debiasing procedures can reduce overall overestimation
+bias, but these methods rarely improve sensitivity: the ability to
+discriminate between low- and high-probability events [@Valentine2013].
+In terms of numerical cognition, *bias* reflects a systematic tendency
+to assign inflated probability values (treating most associations as
+stronger than they truly are), whereas *sensitivity* reflects accuracy
+in tuning numerical judgments to actual associative strength
+[@Maki2007a]. The current experiment tested whether using individually
+normed frequencies would improve numerical estimation of associative
+probabilities. Previous studies have shown that people are generally
+poor at estimating what *others* would say when given a particular cue
+word [@Maki2007a; @Maki2007; @Buchanan2010; @Foster2012; @maxwell2020;
+@maxwell2021], suggesting that collective norms are difficult to
+approximate. In a traditional judgment of associative memory (JAM) task,
+participants estimate how many people out of 100 would produce a target
+word in response to a cue [@Maki2007]. In contrast, our design had
+participants generate their own frequency norms across multiple sessions
+and then judge the probability of their own cue–target pairings. If
+these frequency memories function like distributed practice in study
+skills, repeated exposure should foster expertise in probability
+estimation, improving judgment capacity relative to comparison groups.
 
 The following hypotheses were examined:
 
--   *Hypothesis 1*: Word frequency will be correlated with previous database frequency on an individual and overall participant level.
--   *Hypothesis 2*: Free association database norms will be predictive of all group's judgments. Simple linear regressions will be used to calculate the slope of judgments when compared to free association norms. Given previous research [@Maki2007; @Maki2007a; @Valentine2013], the values were expected to be sensitive (*b* $\ne$ 0) but not perfectly attuned (*b* = 1).
--   *Hypothesis 3*: Judgment ability will vary across groups, so that the experimental group should show better judgment ability when compared to their own norms over control, matched, and experimental groups compared to free association norms.
+-   *Hypothesis 1*: Individual normed cue-response probabilities will be
+    correlated with previous database probabilities on an individual and
+    overall participant level.
+-   *Hypothesis 2*: Free association database norms will be predictive
+    of all group's judgments. Mixed linear models will be used to
+    calculate the slope of judgments when compared to free association
+    norms. Given previous research [@Maki2007; @Maki2007a;
+    @Valentine2013], the values were expected to be sensitive (*b* $\ne$
+    0)  but not perfectly attuned (*b* = 1).
+-   *Hypothesis 3*: Judgment ability will vary across groups, so that
+    the experimental group should show better judgment ability when
+    compared to their own norms over control, matched, and experimental
+    groups compared to free association norms.
 
-These hypotheses underscore how expertise, operationalized as repeated interaction with specific word pairings and their frequencies, affects the ability to make numerical judgments of probability from memory.
-In studies of distributed practice, repeated exposure increases the subjective likelihood of remembering an item, leading to higher judgments of learning.
-A parallel process can be expected here: as items are encountered repeatedly, participants should assign higher probability values to those associations, reflecting strengthened memory connections.
-Thus, expertise not only improves memory retention but also has the potential to enhance the calibration of numerical estimates, linking metacognitive monitoring with fundamental processes in numerical cognition.
+These hypotheses underscore how expertise, operationalized as repeated
+interaction with specific word pairings and their frequencies, affects
+the ability to make numerical judgments of probability from memory. In
+studies of distributed practice, repeated exposure increases the
+subjective likelihood of remembering an item, leading to higher
+judgments of learning. A parallel process can be expected here: as items
+are encountered repeatedly, participants should assign higher
+probability values to those associations, reflecting strengthened memory
+connections. Thus, expertise not only improves memory retention but also
+has the potential to enhance the calibration of numerical estimates,
+linking metacognitive monitoring with fundamental processes in numerical
+cognition.
 
 ```{r create-data, include = FALSE, eval = FALSE, echo = FALSE}
 ##read the two data sets and norms
@@ -160,7 +235,7 @@ fulldata$expnorm <- fulldata$expnorm * 20
 fulldata$judgment <- fulldata$judgment * 20
 fulldata$fsg <- fulldata$fsg * 100
 fulldata$bsg <- fulldata$bsg * 100
-fulldata$swow <- fulldata$swow *100
+fulldata$swow <- fulldata$swow * 100
 
 write.csv(fulldata, "../2_Data/judgmentdata.csv", row.names = FALSE)
 ```
@@ -174,17 +249,31 @@ write.csv(fulldata, "../2_Data/judgmentdata.csv", row.names = FALSE)
 ##the matched group was collected until there was a pair for every person
 ##the control group n can be seen by importing the dataset and looking at unique participant numbers
 
-fulldata <- read.csv("../2_Data/judgmentdata.csv")
+fulldata <- read.csv("../2_Data/judgmentdata.csv") %>% 
+  mutate(expnorm = expnorm / 100, 
+         judgment = judgment / 100, 
+         fsg = fsg / 100, 
+         swow = swow / 100, 
+         swow = (swow - min(swow, na.rm = TRUE)) / 
+                       (max(swow, na.rm = TRUE) - min(swow, na.rm = TRUE)))
 SS <- table(fulldata$group[!duplicated(fulldata$partno)])
 ```
 
-Participants were recruited through the Department of Psychology’s undergraduate subject pool at a large Midwestern university.
-Students were required to participate in research for their general psychology course, and some upper-level courses allowed research participation for extra credit.
-The research project was displayed on the SONA system, an online participant-credit management platform, and participants selected studies to complete based on availability and interest in the posted abstract.
-The entire experiment was completed online, with each section lasting approximately five to fifteen minutes.
-In the experimental group, *n* = 51 participants began the study, with *n* = `r SS["exp"]` completing all experimental sessions.
-For the non-finishing group (*n* = 14), the average number of sessions was *M* = 2.14 (*SD* = 1.17), with a range of one to four rating sessions.
-The comparison groups included `r SS["control"]` participants for the control group and `r SS["matched"]` participants for the matched group.
+Participants were recruited through the Department of Psychology’s
+undergraduate subject pool at a large Midwestern university. Students
+were required to participate in research for their general psychology
+course, and some upper-level courses allowed research participation for
+extra credit. The research project was displayed on the SONA system, an
+online participant-credit management platform, and participants selected
+studies to complete based on availability and interest in the posted
+abstract. The entire experiment was completed online, with each section
+lasting approximately five to fifteen minutes. In the experimental
+group, *n* = 51 participants began the study, with *n* = `r SS["exp"]`
+completing all experimental sessions. For the non-finishing group (*n* =
+14), the average number of sessions was *M* = 2.14 (*SD* = 1.17), with a
+range of one to four rating sessions. The comparison groups included
+`r SS["control"]` participants for the control group and
+`r SS["matched"]` participants for the matched group.
 
 ## Materials
 
@@ -211,48 +300,88 @@ largeMbsg <- mean(as.numeric(largestim$`Backward Strength`), na.rm  = T)
 largeSDbsg <- sd(as.numeric(largestim$`Backward Strength`), na.rm  = T)
 ```
 
-Stimuli were selected from the free association word norms by @Nelson2004.
-The database includes a list of cues shown to participants, with the responses given by participants in their study.
-For example, with the pair *steak-sirloin*, *steak* is the cue word that is paired with the target word, *sirloin*.
-Each cue word (the first word) has several different target words (*steak-cow*, *steak-sauce*).
-Cue words were selected with varying number of target combinations, specifically, ten cue words with small cue set sizes and ten cues with large cue set sizes.
-Cue set size indicates the number of other pairs in the database; for example, *car* has 25 cue-target combinations in the @Nelson2004 database, while *pupil* only has four cue-target combinations.
+Stimuli were selected from the free association word norms by
+@nelson2004. The database includes a list of cues shown to participants,
+with the responses given by participants in their study. For example,
+with the pair *steak-sirloin*, *steak* is the cue word that is paired
+with the target word, *sirloin*. Each cue word (the first word) has
+several different target words (*steak-cow*, *steak-sauce*). Cue words
+were selected with varying number of target combinations, specifically,
+ten cue words with small cue set sizes and ten cues with large cue set
+sizes. Cue set size indicates the number of other pairs in the database;
+for example, *car* has 25 cue-target combinations in the @nelson2004
+database, while *pupil* only has four cue-target combinations.
 
-The forward strength (FSG) indicates the likelihood of the the response, given the cue ($P(response|cue)$), while backward strength (BSG) indicates the reverse probability ($P(cue|response$)).
-Free association probability is not symmetric, and therefore, FSG $\ne$ BSG in most cue-response pairs.
-The ten cue words with a smaller cue set size ($M_{Set Size}$ = `r printnum(smallMcss)`, $SD_{Set Size}$ = `r printnum(smallSDcss)`, range = 3-5) had an average forward strength of $M_{FSG}$ = `r printnum(smallMfsg, gt1 = F)` ($SD_{FSG}$ = `r printnum(smallSDfsg, gt1 = F)`) and backward strength of $M_{BSG}$ = `r printnum(smallMbsg, gt1 = F)` (*SD* = `r printnum(smallSDbsg, gt1 = F)`).
-The larger cue set size words ($M_{Set Size}$ = `r printnum(largeMcss)`, $SD_{Set Size}$ = `r printnum(largeSDcss)`, range = 20-33) had a forward strength of $M_{FSG}$ = `r printnum(largeMfsg, gt1 = F)` ($SD_{FSG}$ = `r printnum(largeSDfsg, gt1 = F)`) and a backwards strength of $M_{BSG}$ = `r printnum(largeMbsg, gt1 = F)` ($SD_{BSG}$ = `r printnum(largeSDbsg, gt1 = F)`).
-Target word selection is described below.
-The complete set of materials can be found at <https://github.com/doomlab/jam-numeracy-longitudinal>.
+The forward strength (FSG) indicates the likelihood of the the response,
+given the cue ($P(response|cue)$), while backward strength (BSG)
+indicates the reverse probability ($P(cue|response$)). Free association
+probability is not symmetric, and therefore, FSG $\ne$ BSG in most
+cue-response pairs. The ten cue words with a smaller cue set size
+($M_{Set Size}$ = `r printnum(smallMcss)`, $SD_{Set Size}$ =
+`r printnum(smallSDcss)`, range = 3-5) had an average forward strength
+of $M_{FSG}$ = `r printnum(smallMfsg, gt1 = F)` ($SD_{FSG}$ =
+`r printnum(smallSDfsg, gt1 = F)`) and backward strength of $M_{BSG}$ =
+`r printnum(smallMbsg, gt1 = F)` (*SD* =
+`r printnum(smallSDbsg, gt1 = F)`). The larger cue set size words
+($M_{Set Size}$ = `r printnum(largeMcss)`, $SD_{Set Size}$ =
+`r printnum(largeSDcss)`, range = 20-33) had a forward strength of
+$M_{FSG}$ = `r printnum(largeMfsg, gt1 = F)` ($SD_{FSG}$ =
+`r printnum(largeSDfsg, gt1 = F)`) and a backwards strength of $M_{BSG}$
+= `r printnum(largeMbsg, gt1 = F)` ($SD_{BSG}$ =
+`r printnum(largeSDbsg, gt1 = F)`). Target word selection is described
+below. The complete set of materials can be found at
+<https://github.com/doomlab/jam-numeracy-longitudinal>.
 
 ## Procedure
 
 ### Experimental Group
 
-#### Norming Phase
+\textbf{Norming Phase.}
 
-This group of participants was given the opportunity to compare their own pairing probabilities rather than estimating others’ likely judgments.
-In the norming stage, participants received instructions for a free association task, described as writing down "the first word that pops into your mind when you hear a cue word." For example, many people may associate *cat* with *dog* because of common ownership, but they may also produce idiomatic responses such as it’s raining cats and dogs.
-These examples emphasized free association as reflecting general language use rather than limited to literal features (e.g., *fur*, *tails*, *whiskers*).
-After these instructions, participants were presented with twenty cue words, each accompanied by four blanks.
-For each cue word, they wrote the first four target words that came to mind, providing variation in the target responses during the initial stage.
+This group of participants was given the opportunity to compare their
+own pairing probabilities rather than estimating others’ likely
+judgments. In the norming stage, participants received instructions for
+a free association task, described as writing down "the first word that
+pops into your mind when you hear a cue word." For example, many people
+may associate *cat* with *dog* because of common ownership, but they may
+also produce idiomatic responses such as it’s raining cats and dogs.
+These examples emphasized free association as reflecting general
+language use rather than limited to literal features (e.g., *fur*,
+*tails*, *whiskers*). After these instructions, participants were
+presented with twenty cue words, each accompanied by four blanks. For
+each cue word, they wrote the first four target words that came to mind,
+providing variation in the target responses during the initial stage.
 All responses were stored for later use.
 
-After a minimum delay of two days, participants were invited to complete the survey again.
-Email reminders were sent when the next session became available.
-Each participant completed the survey five times, with cue words randomized at each presentation.
-Responses across the five sessions were then averaged to generate probabilities for each cue–target pairing, following procedures similar to those used in the free association database [@Nelson2004].
-For example, across five sessions, a participant might generate several different responses to the cue *computer*, such as *mouse*, *screen*, *game*, *program*, *keyboard*, or *data*.
-Each cue–target probability reflected the proportion of sessions in which that target was produced (e.g., if screen was listed in all five sessions, its probability was 5/5, or 100%).
-From these data, 50 cue–target combinations were selected for each participant, with ten word–target pairs drawn from each probability level (20%, 40%, 60%, 80%, and 100%).
+After a minimum delay of two days, participants were invited to complete
+the survey again. Email reminders were sent when the next session became
+available. Each participant completed the survey five times, with cue
+words randomized at each presentation. Responses across the five
+sessions were then averaged to generate probabilities for each
+cue–target pairing, following procedures similar to those used in the
+free association database [@nelson2004]. For example, across five
+sessions, a participant might generate several different responses to
+the cue *computer*, such as *mouse*, *screen*, *game*, *program*,
+*keyboard*, or *data*. Each cue–target probability reflected the
+proportion of sessions in which that target was produced (e.g., if
+screen was listed in all five sessions, its probability was 5/5, or
+100%). From these data, 50 cue–target combinations were selected for
+each participant, with ten word–target pairs drawn from each probability
+level (20%, 40%, 60%, 80%, and 100%).
 
-#### Judgment Phase
+\textbf{Judgment Phase.} 
 
-Participants were then asked to estimate the probability of each of their cue–target combinations.
-For example, a participant might see the prompt: “When asked about *computer*, you listed the word *program*.
-What percent of the time did you put computer and program together?”
-Responses were made on a rating scale with five options (20%, 40%, 60%, 80%, and 100%) by selecting the appropriate radio button.
-After completing the final survey, participants were debriefed.The complete dataset of cue–target responses and probability judgments from both phases, along with an R Markdown analysis file created using the *papaja* package [@Aust2017], is available at our GitHub repository: <https://github.com/doomlab/jam-numeracy-longitudinal>.
+Participants were then asked to estimate the probability of each of
+their cue–target combinations. For example, a participant might see the
+prompt: "When asked about *computer*, you listed the word *program*.
+What percent of the time did you put computer and program together?"
+Responses were made on a rating scale with five options (20%, 40%, 60%,
+80%, and 100%) by selecting the appropriate radio button. After
+completing the final survey, participants were debriefed.The complete
+dataset of cue–target responses and probability judgments from both
+phases, along with an R Markdown analysis file created using the
+*papaja* package [@aust2022], is available at our GitHub repository:
+<https://github.com/doomlab/jam-numeracy-longitudinal>.
 
 ### Control Group
 
@@ -261,54 +390,414 @@ After completing the final survey, participants were debriefed.The complete data
 fulldata$index <- paste(fulldata$cue, fulldata$target, sep = "")
 controlgroup <- subset(fulldata, group == "control")
 controlwords <- controlgroup[!duplicated(controlgroup$index), ]
-
-##fsg words remember we multiplied by 100 to match the scale
-mean(controlwords$fsg); sd(controlwords$fsg)
-##bsg words
-mean(controlwords$bsg, na.rm = T); sd(controlwords$bsg, na.rm = T)
 ```
 
-Results from a separate control group were compared with the experimental participants’ judgment scores.
-Because each experimental participant’s final word pairs were unique, a set of cue–target pairings was selected from the free association database [@Nelson2004] to serve as a comparison.
-The same twenty cue words were used, with target words chosen to ensure an equal distribution of low-, medium-, and high-strength associations.
-For each cue word from the experimental norming phase, three cue–target pairs were selected, yielding a total of 60 word pairs.
-Several cues were necessarily repeated to create the full set of 60 pairs, thereby matching the repetition structure used in the experimental group.
-The average FSG was *M* = .19 (*SD* = .25) and the BSG was *M* = .08 (*SD* = .15).
-The control group was given the same instructions about a free association task, along with examples.
-Next, the rating task was explained as follows: "How many people out of a 100 would give the target (second) word when asked the cue (first) word?" Participants estimated the probability of word pair occurrence using the same 20%-40%-60%-80%-100% scale as the experimental group.
+Results from a separate control group were compared with the
+experimental participants’ judgment scores. Because each experimental
+participant’s final word pairs were unique, a set of cue–target pairings
+was selected from the free association database [@nelson2004] to serve
+as a comparison. The same twenty cue words were used, with target words
+chosen to ensure an equal distribution of low-, medium-, and
+high-strength associations. For each cue word from the experimental
+norming phase, three cue–target pairs were selected, yielding a total of
+60 word pairs. Several cues were necessarily repeated to create the full
+set of 60 pairs, thereby matching the repetition structure used in the
+experimental group. The average FSG was *M* =
+`r apa_num(mean(controlwords$fsg)/100)` (*SD* =
+`r apa_num(sd(controlwords$fsg)/100)`) and the BSG was *M* =
+`r apa_num(mean(controlwords$bsg, na.rm = T)/100)` (*SD* =
+`r apa_num(sd(controlwords$bsg, na.rm = T)/100)`). The control group was
+given the same instructions about a free association task, along with
+examples.Next, the rating task was explained as follows: "How many
+people out of a 100 would give the target (second) word when asked the
+cue (first) word?" Participants estimated the probability of word pair
+occurrence using the same 20%-40%-60%-80%-100% scale as the experimental
+group.
 
 ### Control Matched Group
 
-Last, a separate comparison group was included to parallel the experimental group.
-Each participant in this group was randomly paired with an experimental participant.
-They received the same instructions as the control group for both the free association and rating tasks.
-However, rather than judging randomly selected word–pairs, they evaluated the normed word–pairs generated by their paired experimental participant.
-This matched group provided a test of stimulus effects on judgment, allowing us to determine whether improved performance in the experimental group was specifically due to participants’ prior interaction with the word–pairs.
+Last, a separate comparison group was included to parallel the
+experimental group. Each participant in this group was randomly paired
+with an experimental participant. They received the same instructions as
+the control group for both the free association and rating tasks.
+However, rather than judging randomly selected word–pairs, they
+evaluated the normed word–pairs generated by their paired experimental
+participant. This matched group provided a test of stimulus effects on
+judgment, allowing us to determine whether improved performance in the
+experimental group was specifically due to participants’ prior
+interaction with the word–pairs.
 
 # Results
 
-## Experimental Norming Descriptive Statistics 
+## Experimental Norming Descriptive Statistics
 
 ```{r descriptive-statistics}
-exclude_words <- c("the", "an", "of", "a", "and", "to", "than", "that", "then")
+exclude_words <- c("the", "an", "of", "a", "and", "to", 
+                   "than", "that", "then", "so", 
+                   "or", "if", "too", "as")
 norming <- import("../2_Data/exp_group_norming/processed_data/exp_words_processed.xlsx") %>% 
   mutate(cue = tolower(cue), 
-         response = tolower(response)) %>% 
+         response = tolower(response),
+         response = gsub("\"|\\(|\\)", "", response)) %>% 
+  filter(!(response %in% exclude_words))
   
+unique_targets_per_participant <- norming %>%
+  group_by(partno) %>%
+  summarise(unique_targets = n_distinct(response))
 
+n_once <- norming %>% 
+  group_by(response, partno) %>% 
+  filter(frequency == 1)
 
+n_five <- norming %>% 
+  group_by(response, partno) %>% 
+  filter(frequency >= 4)
+
+unique_targets_per_cue <- norming %>%
+  group_by(cue) %>%
+  summarise(unique_targets = n_distinct(response))
 ```
 
-Across all five testing sessions, participants generated a large and varied set of responses.
-On average, each participant listed *M* = 186.22 (*SD* = 37.66) unique target words, resulting in a total of 8,457 cue–target pairs across the experiment.
-The vast majority of responses were produced only once, demonstrating that participants were not simply repeating a small set of highly accessible words, but instead generating a broad range of associations across sessions.
-At the same time, a small but clear increase was observed at the five-mention level, indicating that a subset of cue–target pairs were consistently retrieved across all sessions and reflected particularly strong associations.
-This dual pattern, mostly novel responses, with a stable cluster of repeated pairings, captures both the flexibility and stability of associative memory.
+The data were split into separate cue-response combinations for each
+participant and norming time point. Response were spelled checked and
+corrected unless the answer was not obvious or was a combination of
+prefixes and regular words (e.g., *un-special*). Determinants (*the, an,
+a*) and other stopwords were removed from the responses (*of, to, than,
+that, then, so, if, too, or, as*). Words were not lemmatized and were
+left in their original form (e.g., *arm* and *arms* were left separate).
+If a participant listed a response word more than once per session for a
+cue, it was deleted, so that the maximum number of times a cue-response
+pair could be mentioned was five times.
 
-At the stimulus level, cues elicited an average of *M* = 162.60 (*SD* = 29.49) unique targets, underscoring the diversity of responses to each word.
-When collapsed across all participants and stimuli, the experiment yielded 2,277 distinct target words.
-This broad distribution suggests that free association tasks elicit a wide variety of lexical connections, while the consistent recurrence of certain responses highlights the emergence of **high-frequency, strongly linked associations**.
-Together, these descriptive findings show that the experimental design successfully captured both the variability of associative networks and the stability of robust word pairings, setting the stage for later analyses of participants’ probability judgments.
+Across all five testing sessions, participants generated a large and
+varied set of responses. On average, each participant listed *M* =
+`r apa_num(mean(unique_targets_per_participant$unique_targets))` (*SD* =
+`r apa_num(sd(unique_targets_per_participant$unique_targets))`) unique
+response words, resulting in a total of `r nrow(norming)` cue–response
+pairs across the experiment after removal of the stopwords and filler
+words. The vast majority of responses were produced only once per
+participant (*n* = `r nrow(n_once)`), demonstrating that participants
+were not simply repeating a small set of highly accessible words, but
+instead generating a broad range of associations across sessions. At the
+same time, a smaller set was observed in four or five responses (*n* =
+`r nrow(n_five)`), indicating that a subset of cue–response pairs were
+consistently retrieved across most sessions and reflected particularly
+strong associations. This dual pattern, mostly novel responses, with a
+small cluster of repeated pairings, captures both the flexibility and
+stability of associative memory.
+
+At the stimulus level, cues elicited an average of *M* =
+`r apa_num(mean(unique_targets_per_cue$unique_targets))` (*SD* =
+`r apa_num(sd(unique_targets_per_cue$unique_targets))`) unique targets,
+underscoring the diversity of responses to each word. When collapsed
+across all participants and stimuli, the experiment yielded
+`r norming %>% select(response) %>% unique() %>% count()` distinct
+target words. This broad distribution suggests that free association
+tasks elicit a wide variety of lexical connections, while the consistent
+recurrence of certain responses highlights the emergence of
+high-frequency, strongly linked associations. Together, these
+descriptive findings show that the experimental design successfully
+captured both the variability of associative networks and the stability
+of robust word pairings, setting the stage for later analyses of
+participants’ probability judgments.
+
+## Hypothesis 1
+
+```{r hyp1}
+# import the usf and swow
+nelson <- read.delim("../2_Data/all_group_judgments/usf_norms.txt")
+swow <- read.csv("../2_Data/all_group_judgments/strength.SWOW-EN.R123.csv")
+
+norming_merge <- norming %>% 
+  left_join(nelson %>% 
+              select(CUE, TARGET, FSG) %>% 
+              mutate(cue = tolower(CUE), 
+                     target = tolower(TARGET),
+                     fsg = FSG),
+            by = c("cue" = "cue", 
+                   "response" = "target")) %>% 
+  select(-FSG, -CUE, -TARGET) %>% 
+  left_join(swow %>% 
+              select(cue, response, R123.Strength) %>% 
+              rename(swow = R123.Strength) %>% 
+              mutate(swow = (swow - min(swow, na.rm = TRUE)) / 
+                       (max(swow, na.rm = TRUE) - min(swow, na.rm = TRUE)), 
+                     cue = tolower(cue),
+                     response = tolower(response))) %>% 
+  mutate(frequency = frequency/5)
+
+unique_pairs <- norming_merge %>%
+  distinct(cue, response, .keep_all = TRUE)
+fsg_overlap <- unique_pairs %>%
+  filter(!is.na(fsg)) %>%
+  nrow()
+swow_overlap <- unique_pairs %>%
+  filter(!is.na(swow)) %>%
+  nrow()
+
+# figure out correlations
+lme_fsg_slope <- lme(frequency ~ fsg,
+                     random = ~ fsg | partno,
+                     data = norming_merge,
+                     method = "REML",
+                     na.action = "na.omit")
+
+lme_fsg_results <- apa_print(lme_fsg_slope)
+
+# figure out correlations
+lme_swow_slope <- lme(frequency ~ swow,
+                     random = ~ swow | partno,
+                     data = norming_merge,
+                     method = "REML",
+                     na.action = "na.omit")
+
+lme_swow_results <- apa_print(lme_swow_slope)
+```
+
+These cue–response pairs were merged with the @nelson2004 and
+@dedeyne2019 free association norms. The `r nrow(unique_pairs)` unique
+cue–response pairs across all participants in the experimental norming
+group overlapped with the @nelson2004 norms by
+`r apa_num(fsg_overlap/nrow(unique_pairs)*100)`% and with the
+@dedeyne2019 norms by `r apa_num(swow_overlap/nrow(unique_pairs)*100)`%.
+
+To test how closely participant ratings tracked normative values, we fit
+mixed linear models that accounted for repeated measurements within
+participants and correlated error structures [@gelman2006]. Each model
+included a random intercept for participant and random slopes for
+forward strength, allowing us to estimate individual differences in both
+overall bias and sensitivity. Using the *nlme* package in *R*, fixed
+effects were specified as database values predicting participant
+response frequencies, with all predictors normalized to the same scale.
+As shown in Figure \@ref(fig:fig-fsg-swow-scores), participant judgments
+were positively related to both sets of normative values. A perfect
+calibration would correspond to an intercept of 0 [no upward bias,
+@Maki2007] and a slope of 1 (perfect sensitivity). Given the
+individualized nature of our norms and the fact that the design
+precludes true zero ratings, we expected some upward bias in intercepts,
+but slopes greater than zero would indicate sensitivity to associative
+strength ($b \ne 0$).
+
+For the @nelson2004 data, the intercept showed an upward bias,
+`r lme_fsg_results$estimate$Intercept`,
+`r lme_fsg_results$statistic$Intercept`, and the slope was significantly
+different from zero, `r lme_fsg_results$estimate$fsg`,
+`r lme_fsg_results$statistic$fsg`. Random effects revealed variability
+across participants, with *SD* = 0.06 for intercepts and *SD* = 0.09 for
+slopes. For the @dedeyne2019 (SWOW) data, intercept bias was smaller,
+`r lme_swow_results$estimate$Intercept`,
+`r lme_swow_results$statistic$Intercept`, and slope sensitivity was
+higher than with Nelson norms, `r lme_swow_results$estimate$swow`,
+`r lme_swow_results$statistic$swow`. Variability was again evident, with
+random intercept *SD* = 0.05 and random slope *SD* = 0.12. Together,
+these results indicate that participants’ probability judgments reliably
+tracked normative association strength, with evidence for both upward
+bias and meaningful individual differences in sensitivity, consistent
+with Hypothesis 1.
+
+```{r fig-fsg-swow-scores, message = FALSE, warning = FALSE, fig.cap="Relationship between participants’ probability judgments and normative association strength. The left panel shows judgments plotted against Nelson free association forward strength, and the right panel shows judgments plotted against SWOW free association strength. Points represent individual cue–target judgments (scaled to proportions), and lines represent fitted linear regression slopes with 95% confidence intervals. Participants’ judgments increased systematically with both normative measures"}
+p_fsg <- ggplot(norming_merge, aes(x = fsg, y = frequency)) +
+  geom_point(alpha = 0.1) +
+  geom_smooth(method = "lm", se = TRUE, color = "gray20") +
+  labs(x = "Nelson FSG", y = "Judgment (%)") +
+  theme_minimal()
+
+p_swow <- ggplot(norming_merge, aes(x = swow, y = frequency)) +
+  geom_point(alpha = 0.1) +
+  geom_smooth(method = "lm", se = TRUE, color = "gray20") +
+  labs(x = "SWOW FSG", y = "Judgment (%)") +
+  theme_minimal()
+
+p_fsg + p_swow
+```
+
+## Hypothesis 2
+
+```{r hyp2}
+exp_hyp2 <- lme(judgment ~ swow,
+                     random = ~ swow | partno,
+                     data = fulldata %>% 
+                  filter(group == "exp"),
+                     method = "REML",
+                     na.action = "na.omit")
+
+exp_hyp2_results <- apa_print(exp_hyp2)
+
+matched_hyp2 <- lme(judgment ~ swow,
+                     random = ~ swow | partno,
+                     data = fulldata %>% 
+                  filter(group == "matched"),
+                     method = "REML",
+                     na.action = "na.omit")
+
+matched_hyp2_results <- apa_print(matched_hyp2)
+
+control_hyp2 <- lme(judgment ~ swow,
+                     random = ~ swow | partno,
+                     data = fulldata %>% 
+                  filter(group == "control"),
+                     method = "REML",
+                     na.action = "na.omit")
+
+control_hyp2_results <- apa_print(control_hyp2)
+```
+
+```{r hyp2-robust}
+exp_hyp2_fsg <- lme(judgment ~ fsg,
+                     random = ~ fsg | partno,
+                     data = fulldata %>% 
+                  filter(group == "exp"),
+                     method = "REML",
+                     na.action = "na.omit",
+                  control = lmeControl(
+    msMaxIter = 200,    # outer iterations
+    msMaxEval = 400,    # evaluations
+    opt = "optim"       # alternate optimizer
+  ))
+
+matched_hyp2_fsg <- lme(judgment ~ fsg,
+                     random = ~ fsg | partno,
+                     data = fulldata %>% 
+                  filter(group == "matched"),
+                     method = "REML",
+                     na.action = "na.omit")
+
+control_hyp2_fsg <- lme(judgment ~ fsg,
+                     random = ~ fsg | partno,
+                     data = fulldata %>% 
+                  filter(group == "control"),
+                     method = "REML",
+                     na.action = "na.omit")
+```
+
+To analyze this hypothesis, we used mixed linear models to predict
+participant judgments of association for the experimental, control, and
+matched groups. In the experimental group, participants judged their own
+free association norms, providing a baseline against which we can
+compare group differences for Hypothesis 3. The SWOW norms were used as
+the predictor because they offered greater overlap with participant
+judgments. The same model structure from Hypothesis 1 was applied, with
+random intercepts for participants and random slopes for the free
+association predictor.
+
+The experimental norms group showed a biased intercept,
+`r exp_hyp2_results$full_result$Intercept`, and a sensitive slope,
+`r exp_hyp2_results$full_result$swow`, with variability across
+participants (*SD* intercept = 0.10, *SD* slope = 0.08). The matched
+group, who judged the same pairs as the experimental group, showed
+similar results with a biased intercept,
+`r matched_hyp2_results$full_result$Intercept`, and a non-zero slope,
+`r matched_hyp2_results$full_result$swow` (*SD* intercept = 0.14, *SD*
+slope = 0.13). Finally, the control group, who judged parallel
+cue–response pairs from the norms database, showed the same pattern of
+biased intercepts, `r control_hyp2_results$full_result$Intercept`, and
+significant slopes, `r control_hyp2_results$full_result$swow` (*SD*
+intercept = 0.10, *SD* slope = 0.08). Analyses with the Nelson norms
+confirmed the robustness of these results.
+
+These findings replicate prior work [@Maki2007; @Maki2007a;
+@Valentine2013; @maxwell2020], showing systematic overestimation
+reflected in the bias factor (intercept), which typically falls between
+0.40 and 0.60. The experimental group intercept was somewhat higher than
+these traditional values, likely reflecting task demands, whereas the
+control and matched groups aligned closely with prior findings. All
+three groups demonstrated sensitivity to differences in associative
+strength, but with shallow slopes (0.20–0.40), consistent with previous
+evidence that people are not perfectly sensitive to strength
+differences, a pattern also common in the judgments of learning
+literature [@Koriat2008; @Koriat2006].
+
+## Hypothesis 3
+
+```{r}
+exp_hyp3 <- lme(judgment ~ expnorm,
+                     random = ~ expnorm | partno,
+                     data = fulldata %>% 
+                  filter(group == "exp"),
+                     method = "REML",
+                     na.action = "na.omit")
+
+exp_hyp3_results <- apa_print(exp_hyp3)
+```
+
+For our final hypothesis, the bias and sensitivity factors for the
+experimental norm group were calculated against their own free
+association norms using the same mixed models described above. The bias
+factor was lower than the values observed in Hypothesis 2,
+`r exp_hyp3_results$full_result$Intercept` (*SD* = 0.14), while the
+sensitivity slope was higher than any of the three slopes from
+Hypothesis 2, `r exp_hyp3_results$full_result$expnorm` (*SD* = 0.13).
+Confidence intervals confirmed that these estimates were significantly
+different from the previous results. Together, these findings indicate
+that when participants judged with respect to their own frequency norms,
+they showed reduced bias and greater sensitivity, reflecting improved
+calibration of numerical estimates. This pattern supports the idea that
+expertise, here operationalized as repeated experience with
+self-generated associations, enhances individuals’ ability to make
+accurate quantitative judgments from memory.
+
+# Discussion
+
+In viewing these findings, it appears that participants can judge the
+associative strength between word–pairs, and they perform especially
+well when judging their own associative norms. The experimental group
+demonstrated greater accuracy in distinguishing low- and high-frequency
+relationships compared to both the matched and control groups. Repeated
+interaction with the word–pairs improved performance, suggesting that
+expertise supports more accurate quantitative judgments. This outcome is
+consistent with a broader literature showing that experts demonstrate
+enhanced working memory within their domains [@Chase1973; @Ericsson1998]
+as well as deeper access to long-term memory structures [@Ericsson1999].
+Previous research on judgments of associative memory (JAM) has suggested
+that practice and feedback do not always yield improvements [@Maki2007a;
+@Koriat2005]; however, this results indicates that experience with one's
+own memory is better than experience in practicing judgments with
+feedback.
+
+One answer lies in how we frame these tasks as problems of numerical
+estimation. Participants were originally asked to judge what 100 college
+students would say in response to a cue word, the logic by which free
+association norms are defined [@Nelson2000]. In effect, JAM tasks are
+problems of probability judgment: given a cue, what is the expected
+frequency of a particular response? This study revealed that even when
+participants generated many unique responses, their judgments still
+aligned with normative probabilities, showing that people can
+approximate collective likelihoods. This result is hardly surprising,
+humans make probability judgments constantly in daily life: estimating
+how long a commute will take, whether the stove was turned off, how long
+to wait for a late friend, or whether enough studying has been done
+before an exam. The popular game show Family Feud capitalized on exactly
+this capacity: contestants estimate the most probable answers given a
+cue, which would have made for dull television if people were incapable
+of such probabilistic reasoning.
+
+At the same time, the results underscore a common challenge in numeracy:
+daily practice with estimation does not necessarily make us precise
+estimators. Metacognitive research has repeatedly shown that people tend
+to overestimate their learning and memory performance [@Koriat2008;
+@Koriat2005; @Koriat2006]. Similarly, in our study, participants
+exhibited systematic bias (intercepts > 0), even when judging their own
+norms. Although slopes were steeper in the experimental group than in
+the control and matched groups, they remained below 1.0, the benchmark
+for perfect sensitivity. Thus, while participants became more calibrated
+when judging their own norms, they still showed under-sensitivity to
+actual frequencies.
+
+From a broader perspective, these results extend the study of numerical
+cognition into the domain of memory judgments. Participants are not
+merely retrieving associations but estimating their frequency of
+occurrence, a task structurally similar to other probabilistic judgments
+in everyday numeracy [@gigerenzer1995; @reyna2009]. Expertise reduces
+bias and enhances sensitivity, but systematic imperfections remain. For
+applied contexts, this finding means that encouraging learners to
+interact repeatedly with material (much like participants did with
+word–pairs here) may improve calibration, but "foresight bias" and
+overestimation are unlikely to be eliminated entirely [@Koriat2008].
+Future work could profitably examine how stimulus features, such as
+baseline word frequency or semantic richness, further shape numeric
+estimation from memory, and whether scaffolds from the numeracy
+literature (e.g., training in base rates or frequency formats) could
+reduce residual bias.
 
 \newpage
 
